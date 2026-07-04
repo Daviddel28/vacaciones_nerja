@@ -423,7 +423,7 @@ label span {
   justify-content: center;
   gap: 8px;
   border: 0;
-  background: var(--sea);
+  background: #e56f5a;
   color: #fff;
 }
 

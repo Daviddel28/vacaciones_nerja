@@ -1,48 +1,51 @@
 :root {
   color-scheme: light;
-  --ink: #1d2430;
-  --muted: #687487;
-  --line: #dce5ea;
+  --ink: #0f172a;
+  --muted: #64748b;
+  --line: #e2e8f0;
   --surface: #ffffff;
-  --soft: #f4f7f5;
-  --sea: #0d6f85;
-  --sea-dark: #084b5b;
-  --sun: #f2b84b;
-  --coral: #e56f5a;
-  --mint: #cce6d9;
-  --shadow: 0 18px 50px rgba(12, 33, 43, 0.14);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --soft: #f8fafc;
+  --sea: #0891b2;
+  --sea-dark: #0e7490;
+  --sun: #f59e0b;
+  --coral: #f97316;
+  --mint: #6ee7b7;
+  --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 20px 50px rgba(15, 23, 42, 0.12);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
 }
 
 [data-theme="dark"] {
   color-scheme: dark;
-  --ink: #f0f1f3;
-  --muted: #a8b4c4;
-  --line: #2a3642;
-  --surface: #1a1f28;
-  --soft: #242c37;
-  --sea: #3ca8c8;
-  --sea-dark: #5dbddb;
-  --sun: #f2b84b;
-  --coral: #ff9a8f;
-  --mint: #7dc9a6;
-  --shadow: 0 18px 50px rgba(0, 0, 0, 0.48);
+  --ink: #f1f5f9;
+  --muted: #94a3b8;
+  --line: #334155;
+  --surface: #1e293b;
+  --soft: #0f172a;
+  --sea: #06b6d4;
+  --sea-dark: #0891b2;
+  --sun: #fbbf24;
+  --coral: #fb923c;
+  --mint: #5eead4;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.4);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --ink: #f0f1f3;
-    --muted: #a8b4c4;
-    --line: #2a3642;
-    --surface: #1a1f28;
-    --soft: #242c37;
-    --sea: #3ca8c8;
-    --sea-dark: #5dbddb;
-    --sun: #f2b84b;
-    --coral: #ff9a8f;
-    --mint: #7dc9a6;
-    --shadow: 0 18px 50px rgba(0, 0, 0, 0.48);
+    --ink: #f1f5f9;
+    --muted: #94a3b8;
+    --line: #334155;
+    --surface: #1e293b;
+    --soft: #0f172a;
+    --sea: #06b6d4;
+    --sea-dark: #0891b2;
+    --sun: #fbbf24;
+    --coral: #fb923c;
+    --mint: #5eead4;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.4);
   }
 }
 
@@ -53,13 +56,13 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: #f6f1e8;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
 }
 
 [data-theme="dark"] body {
-  background: #0f1419;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
 }
 
 button,
@@ -76,10 +79,11 @@ button {
 
 .app-hero {
   position: relative;
-  min-height: 320px;
+  min-height: 280px;
   overflow: hidden;
   color: #fff;
   isolation: isolate;
+  background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
 }
 
 .hero-media {
@@ -87,20 +91,21 @@ button {
   inset: 0;
   z-index: -2;
   background:
-    linear-gradient(180deg, rgba(0, 34, 46, 0.36), rgba(0, 34, 46, 0.72)),
+    linear-gradient(135deg, rgba(8, 145, 178, 0.4), rgba(14, 116, 144, 0.6)),
     url("https://commons.wikimedia.org/wiki/Special:FilePath/Nerja.jpg?width=1600") center / cover;
+  opacity: 0.9;
 }
 
 .hero-media::after {
   content: "";
   position: absolute;
   inset: auto 0 0;
-  height: 35%;
-  background: linear-gradient(180deg, transparent, #f6f1e8);
+  height: 40%;
+  background: linear-gradient(180deg, transparent, rgba(248, 250, 252, 0.95));
 }
 
 [data-theme="dark"] .hero-media::after {
-  background: linear-gradient(180deg, transparent, #0f1419);
+  background: linear-gradient(180deg, transparent, rgba(15, 23, 42, 0.98));
 }
 
 .topbar {
@@ -154,11 +159,17 @@ svg {
   width: 48px;
   height: 48px;
   place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.34);
-  border-radius: 8px;
-  background: rgba(7, 31, 40, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.12);
   color: #fff;
   backdrop-filter: blur(16px);
+  transition: all 0.2s ease;
+}
+
+.icon-button:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .icon-button.subtle {
@@ -230,9 +241,10 @@ svg {
 .quick-ideas,
 .board {
   border: 1px solid var(--line);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.92);
+  border-radius: 12px;
+  background: var(--surface);
   box-shadow: var(--shadow);
+  backdrop-filter: blur(8px);
 }
 
 .control-strip {
@@ -372,27 +384,29 @@ textarea {
   min-width: 0;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #fff;
+  background: var(--surface);
   color: var(--ink);
   outline: 0;
+  transition: all 0.2s ease;
 }
 
 input,
 select {
-  min-height: 46px;
+  min-height: 44px;
   padding: 0 12px;
 }
 
 textarea {
   resize: vertical;
   padding: 12px;
+  font-family: inherit;
 }
 
 input:focus,
 select:focus,
 textarea:focus {
   border-color: var(--sea);
-  box-shadow: 0 0 0 4px rgba(13, 111, 133, 0.12);
+  box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.1);
 }
 
 .form-grid {
@@ -423,13 +437,30 @@ label span {
   justify-content: center;
   gap: 8px;
   border: 0;
-  background: #e56f5a;
+  background: linear-gradient(135deg, var(--sea) 0%, var(--sea-dark) 100%);
   color: #fff;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.primary-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(8, 145, 178, 0.3);
+}
+
+.primary-button:active {
+  transform: translateY(0);
 }
 
 .text-button {
   border: 0;
   background: transparent;
+  color: var(--sea);
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+
+.text-button:hover {
   color: var(--sea-dark);
 }
 
@@ -440,11 +471,19 @@ label span {
 }
 
 .text-button.danger {
-  color: #a2382e;
+  color: #ef4444;
+}
+
+.text-button.danger:hover {
+  color: #dc2626;
 }
 
 [data-theme="dark"] .text-button.danger {
-  color: #ff9a8f;
+  color: #f87171;
+}
+
+[data-theme="dark"] .text-button.danger:hover {
+  color: #fca5a5;
 }
 
 .quick-list {
@@ -508,12 +547,19 @@ label span {
   align-items: start;
   padding: 14px;
   border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #fff;
+  border-radius: 10px;
+  background: var(--surface);
+  transition: all 0.2s ease;
+}
+
+.activity-card:hover {
+  border-color: var(--sea);
+  box-shadow: 0 4px 12px rgba(8, 145, 178, 0.1);
 }
 
 .activity-card.is-done {
-  background: #f9faf8;
+  opacity: 0.75;
+  background: var(--soft);
 }
 
 .activity-card.is-done .activity-title {

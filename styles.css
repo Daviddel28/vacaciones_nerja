@@ -73,15 +73,6 @@ button {
   padding: calc(32px + env(safe-area-inset-top)) 20px 0;
 }
 
-.eyebrow {
-  margin: 0 0 8px;
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 0.82rem;
-  font-weight: 800;
-  letter-spacing: 0;
-  text-transform: uppercase;
-}
-
 h1,
 h2,
 p {

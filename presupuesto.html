@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0d6f85">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Presupuesto Nerja">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Presupuesto · Nerja</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="icons/icon-192.svg">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app-shell budget-page">
+      <section class="trips-bar" aria-label="Cabecera del presupuesto">
+        <div class="trips-controls">
+          <a class="text-button small" href="index.html" aria-label="Volver al plan" title="Volver al plan">← Volver al plan</a>
+        </div>
+      </section>
+
+      <section class="section-card budget-card">
+        <div class="dashboard">
+          <header class="dashboard-header">
+            <div>
+              <h2>💶 Presupuesto del viaje</h2>
+              <p class="dashboard-sub" id="tripName">Nerja · 13–17 de julio</p>
+            </div>
+          </header>
+
+          <div class="kpi-row">
+            <div class="kpi">
+              <span class="kpi-label">Gastado</span>
+              <span class="kpi-value" id="kpiSpent">0 €</span>
+            </div>
+            <div class="kpi">
+              <span class="kpi-label">Presupuesto máximo</span>
+              <input id="budgetLimitInput" class="kpi-input" type="number" min="0" step="1" placeholder="Ej. 800">
+            </div>
+            <div class="kpi">
+              <span class="kpi-label">Restante</span>
+              <span class="kpi-value" id="kpiRemaining">—</span>
+            </div>
+          </div>
+
+          <div class="budget-progress" aria-hidden="true">
+            <div class="budget-progress-fill" id="budgetProgressFill"></div>
+          </div>
+          <p id="budgetRemaining" class="budget-remaining"></p>
+
+          <div class="dashboard-charts">
+            <div class="chart-panel">
+              <h3 class="chart-title">Gasto por día</h3>
+              <div id="dayChart" class="bar-chart" role="img" aria-label="Gasto por día"></div>
+            </div>
+            <div class="chart-panel">
+              <h3 class="chart-title">Gasto por categoría</h3>
+              <div id="categoryChart" class="bar-chart" role="img" aria-label="Gasto por categoría"></div>
+            </div>
+          </div>
+
+          <form id="expenseForm" class="expense-form">
+            <h3 class="chart-title">Añadir gasto</h3>
+            <input id="expenseConcept" name="concept" type="text" placeholder="Concepto (ej. Gasolina ida y vuelta)" autocomplete="off" required>
+            <div class="form-grid form-grid-3">
+              <label>
+                <span>Categoría</span>
+                <select id="expenseCategory" name="category">
+                  <option value="Alojamiento">Alojamiento</option>
+                  <option value="Transporte">Transporte</option>
+                  <option value="Comida y cena">Comida y cena</option>
+                  <option value="Actividades">Actividades</option>
+                  <option value="Salir de noche">Salir de noche</option>
+                  <option value="Otros">Otros</option>
+                </select>
+              </label>
+              <label>
+                <span>Día</span>
+                <input id="expenseDay" name="day" type="text" list="dayOptions" placeholder="Lun 13, general...">
+              </label>
+              <label>
+                <span>Importe (€)</span>
+                <input id="expenseAmount" name="amount" type="number" min="0" step="0.01" placeholder="0.00" required>
+              </label>
+            </div>
+            <button class="primary-button" type="submit">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 5v14"></path>
+                <path d="M5 12h14"></path>
+              </svg>
+              Añadir gasto
+            </button>
+          </form>
+
+          <div id="dayBreakdown" class="day-breakdown"></div>
+        </div>
+      </section>
+    </main>
+
+    <datalist id="dayOptions">
+      <option value="Lun 13"></option>
+      <option value="Mar 14"></option>
+      <option value="Mié 15"></option>
+      <option value="Jue 16"></option>
+      <option value="Vie 17"></option>
+    </datalist>
+
+    <script src="shared.js"></script>
+    <script src="budget.js"></script>
+  </body>
+</html>

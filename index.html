@@ -20,28 +20,13 @@
           <h1>🌴 Escapada a Nerja</h1>
         </div>
         <div class="topbar-actions">
-          <button class="icon-button" id="darkModeToggle" type="button" aria-label="Alternar tema oscuro" title="Tema oscuro" aria-pressed="false">
+          <a class="icon-button" href="presupuesto.html" aria-label="Abrir presupuesto" title="Presupuesto">
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="12" r="5"></circle>
-              <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m5.08-5.08l4.24-4.24"></path>
+              <path d="M3 7h18v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7Z"></path>
+              <path d="M3 7l2.5-3h13L21 7"></path>
+              <path d="M16 13h.01"></path>
             </svg>
-          </button>
-          <button class="icon-button" id="shareUrlButton" type="button" aria-label="Compartir link" title="Compartir link">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="18" cy="5" r="3"></circle>
-              <circle cx="6" cy="12" r="3"></circle>
-              <circle cx="18" cy="19" r="3"></circle>
-              <path d="M8.59 13.51a6 6 0 0 0 6.82 0"></path>
-              <path d="M15.41 6.41a6 6 0 0 0-6.82 0"></path>
-            </svg>
-          </button>
-          <button class="icon-button" id="shareButton" type="button" aria-label="Compartir plan" title="Compartir plan">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"></path>
-              <path d="M16 6l-4-4-4 4"></path>
-              <path d="M12 2v13"></path>
-            </svg>
-          </button>
+          </a>
         </div>
       </nav>
       <section class="hero-panel" aria-label="Resumen del plan">
@@ -61,6 +46,26 @@
     </header>
 
     <main class="app-shell">
+      <section class="confirmed-panel" aria-label="Actividades confirmadas">
+        <div class="confirmed-header">
+          <h2>✅ Vamos a hacer</h2>
+          <span class="muted" id="confirmedCount">0</span>
+        </div>
+        <div id="confirmedList" class="confirmed-list"></div>
+        <p id="confirmedEmpty" class="confirmed-empty">Toca la ⭐ de una idea para confirmarla y añadirla aquí.</p>
+      </section>
+
+      <details class="section-card favorites" open>
+        <summary class="section-summary">
+          <h2>⭐ Favoritas por días</h2>
+          <span class="muted" id="favoritesCount">0</span>
+        </summary>
+        <div class="section-body">
+          <p id="favoritesEmpty" class="day-card-empty">Marca la ⭐ en una idea para planificarla por días aquí.</p>
+          <div id="favoritesByDay" class="day-breakdown"></div>
+        </div>
+      </details>
+
       <section class="trips-bar" aria-label="Gestión de viajes">
         <div class="trips-controls">
           <label class="compact-label">
@@ -102,33 +107,41 @@
           <button class="segment is-active" type="button" data-filter-status="all">Todo</button>
           <button class="segment" type="button" data-filter-status="pending">Pendiente</button>
           <button class="segment" type="button" data-filter-status="done">Hecho</button>
-          <button class="segment" type="button" data-filter-status="favorite">Favoritas</button>
+          <button class="segment" type="button" data-filter-status="favorite">Confirmadas</button>
         </div>
       </section>
 
-      <section class="composer" aria-labelledby="addTitle">
-        <div class="section-heading">
+      <details class="section-card composer" aria-labelledby="addTitle">
+        <summary class="section-summary">
           <h2 id="addTitle">Añadir idea</h2>
+        </summary>
+        <div class="section-body">
+        <div class="section-toolbar">
           <button class="text-button" id="resetButton" type="button">Restaurar ejemplo</button>
         </div>
         <form id="activityForm" class="activity-form">
           <input id="activityTitle" name="title" type="text" placeholder="Ej. Atardecer en el Balcón de Europa" autocomplete="off" required>
-          <div class="form-grid">
+          <div class="form-grid form-grid-3">
             <label>
               <span>Categoría</span>
               <select id="activityCategory" name="category">
                 <option value="Actividades">Actividades</option>
                 <option value="Playas y lugares">Playas y lugares</option>
                 <option value="Comida y cena">Comida y cena</option>
+                <option value="Salir de noche">Salir de noche</option>
                 <option value="Notas">Notas</option>
               </select>
             </label>
             <label>
               <span>Día</span>
-              <input id="activityDay" name="day" type="text" placeholder="Libre, lunes, noche...">
+              <input id="activityDay" name="day" type="text" list="dayOptions" placeholder="Lun 13, Mar 14...">
+            </label>
+            <label>
+              <span>Precio (€)</span>
+              <input id="activityPrice" name="price" type="number" min="0" step="0.01" placeholder="0.00">
             </label>
           </div>
-          <textarea id="activityNotes" name="notes" rows="2" placeholder="Precio, reserva, enlace, si apetece de mañana..."></textarea>
+          <textarea id="activityNotes" name="notes" rows="2" placeholder="Reserva, enlace, si apetece de mañana..."></textarea>
           <button class="primary-button" type="submit">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 5v14"></path>
@@ -137,30 +150,39 @@
             Añadir al plan
           </button>
         </form>
-      </section>
+        </div>
+      </details>
 
-      <section class="quick-ideas" aria-labelledby="quickTitle">
-        <div class="section-heading">
+      <details class="section-card quick-ideas" aria-labelledby="quickTitle">
+        <summary class="section-summary">
           <h2 id="quickTitle">Ideas rápidas</h2>
           <span class="muted">Toca para añadir</span>
+        </summary>
+        <div class="section-body">
+          <div id="quickIdeas" class="quick-list"></div>
         </div>
-        <div id="quickIdeas" class="quick-list"></div>
-      </section>
+      </details>
 
-      <section class="board" aria-label="Listado de actividades">
-        <div class="section-heading">
+      <details class="section-card board" aria-label="Listado de actividades" open>
+        <summary class="section-summary">
           <h2>Plan</h2>
+        </summary>
+        <div class="section-body">
+        <div class="section-toolbar">
           <select id="categoryFilter" class="compact-select" aria-label="Filtrar por categoría">
             <option value="all">Todas las categorías</option>
             <option value="Actividades">Actividades</option>
             <option value="Playas y lugares">Playas y lugares</option>
             <option value="Comida y cena">Comida y cena</option>
+            <option value="Salir de noche">Salir de noche</option>
             <option value="Notas">Notas</option>
           </select>
         </div>
         <div id="activityList" class="activity-list"></div>
         <p id="emptyState" class="empty-state" hidden>No hay ideas con esos filtros.</p>
-      </section>
+        </div>
+      </details>
+
     </main>
 
     <dialog id="editDialog" class="edit-dialog">
@@ -175,19 +197,24 @@
           </button>
         </div>
         <input id="editTitle" type="text" required>
-        <div class="form-grid">
+        <div class="form-grid form-grid-3">
           <label>
             <span>Categoría</span>
             <select id="editCategory">
               <option value="Actividades">Actividades</option>
               <option value="Playas y lugares">Playas y lugares</option>
               <option value="Comida y cena">Comida y cena</option>
+              <option value="Salir de noche">Salir de noche</option>
               <option value="Notas">Notas</option>
             </select>
           </label>
           <label>
             <span>Día</span>
-            <input id="editDay" type="text">
+            <input id="editDay" type="text" list="dayOptions">
+          </label>
+          <label>
+            <span>Precio (€)</span>
+            <input id="editPrice" type="number" min="0" step="0.01" placeholder="0.00">
           </label>
         </div>
         <textarea id="editNotes" rows="3"></textarea>
@@ -198,6 +225,15 @@
       </form>
     </dialog>
 
+    <datalist id="dayOptions">
+      <option value="Lun 13"></option>
+      <option value="Mar 14"></option>
+      <option value="Mié 15"></option>
+      <option value="Jue 16"></option>
+      <option value="Vie 17"></option>
+    </datalist>
+
+    <script src="shared.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

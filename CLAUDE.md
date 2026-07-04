@@ -23,6 +23,17 @@ Per `README.md`, the app is meant to be published via GitHub Pages from the `mai
 
 ## Architecture
 
+There's no module system/bundler. The app is now **two pages** that share data via `localStorage` and share code via a plain global script:
+
+- **`index.html`** (plan) loads `shared.js` then `app.js`.
+- **`presupuesto.html`** (budget dashboard) loads `shared.js` then `budget.js`. Reached via a link in the topbar (the budget used to be an in-page dialog; it's a separate page now).
+- **`shared.js`** holds everything both pages need as top-level globals (accessible to the script loaded after it): `STORAGE_KEY`/`LEGACY_KEY`, `CATEGORY_COLOR_VAR`, `TRIP_DAYS`/`GENERAL_DAY`, `matchTripDay`, `createId`, `formatCurrency`, `renderBarChart`, `loadDarkMode`/`applyTheme`. Load order matters: `shared.js` must come before `app.js`/`budget.js`.
+- Both pages read/write the same `localStorage` trips object, so navigating between them (a full page load) always sees the latest data — there's no live sync, and none is needed.
+- The trip days are fixed to the July 13–17 window in `TRIP_DAYS`; `matchTripDay(dayText)` buckets a free-text day by extracting a number in 13–17 (else "General"). Both the budget breakdown and the "Favoritas por días" section on the main page group by this.
+- Activities carry an optional `price`; priced activities feed the budget alongside manual `expenses`. Expenses live on the trip (`trip.expenses`) and are only rendered on the budget page, but `app.js` still keeps them in state for export/import/reset.
+
+The description below covers the main-page script.
+
 There's no module system — everything in `app.js` runs as one script tag loaded by `index.html`.
 
 - **`app.js`** — all state and behavior:

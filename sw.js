@@ -1,5 +1,14 @@
-const CACHE_NAME = "nerja-plan-v1";
-const ASSETS = ["./", "./index.html", "./styles.css", "./app.js", "./manifest.webmanifest"];
+const CACHE_NAME = "nerja-plan-v5";
+const ASSETS = [
+  "./",
+  "./index.html",
+  "./presupuesto.html",
+  "./styles.css",
+  "./shared.js",
+  "./app.js",
+  "./budget.js",
+  "./manifest.webmanifest"
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));

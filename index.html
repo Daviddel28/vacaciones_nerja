@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0d6f85">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Nerja">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Nerja actividades</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="icons/icon-192.svg">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="app-hero">
+      <div class="hero-media" aria-hidden="true"></div>
+      <nav class="topbar" aria-label="Acciones principales">
+        <div>
+          <p class="eyebrow">Vacaciones en pareja</p>
+          <h1>Nerja actividades</h1>
+        </div>
+        <button class="icon-button" id="shareButton" type="button" aria-label="Compartir plan" title="Compartir plan">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"></path>
+            <path d="M16 6l-4-4-4 4"></path>
+            <path d="M12 2v13"></path>
+          </svg>
+        </button>
+      </nav>
+      <section class="hero-panel" aria-label="Resumen del plan">
+        <div>
+          <span id="totalCount">0</span>
+          <small>ideas</small>
+        </div>
+        <div>
+          <span id="pendingCount">0</span>
+          <small>pendientes</small>
+        </div>
+        <div>
+          <span id="doneCount">0</span>
+          <small>hechas</small>
+        </div>
+      </section>
+    </header>
+
+    <main class="app-shell">
+      <section class="control-strip" aria-label="Filtros">
+        <label class="search-field">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M21 21l-4.3-4.3"></path>
+          </svg>
+          <input id="searchInput" type="search" placeholder="Buscar playa, cena, kayak...">
+        </label>
+        <div class="segmented" role="tablist" aria-label="Estado">
+          <button class="segment is-active" type="button" data-filter-status="all">Todo</button>
+          <button class="segment" type="button" data-filter-status="pending">Pendiente</button>
+          <button class="segment" type="button" data-filter-status="done">Hecho</button>
+          <button class="segment" type="button" data-filter-status="favorite">Favoritas</button>
+        </div>
+      </section>
+
+      <section class="composer" aria-labelledby="addTitle">
+        <div class="section-heading">
+          <h2 id="addTitle">Añadir idea</h2>
+          <button class="text-button" id="resetButton" type="button">Restaurar ejemplo</button>
+        </div>
+        <form id="activityForm" class="activity-form">
+          <input id="activityTitle" name="title" type="text" placeholder="Ej. Atardecer en el Balcón de Europa" autocomplete="off" required>
+          <div class="form-grid">
+            <label>
+              <span>Categoría</span>
+              <select id="activityCategory" name="category">
+                <option value="Actividades">Actividades</option>
+                <option value="Playas y lugares">Playas y lugares</option>
+                <option value="Comida y cena">Comida y cena</option>
+                <option value="Notas">Notas</option>
+              </select>
+            </label>
+            <label>
+              <span>Día</span>
+              <input id="activityDay" name="day" type="text" placeholder="Libre, lunes, noche...">
+            </label>
+          </div>
+          <textarea id="activityNotes" name="notes" rows="2" placeholder="Precio, reserva, enlace, si apetece de mañana..."></textarea>
+          <button class="primary-button" type="submit">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 5v14"></path>
+              <path d="M5 12h14"></path>
+            </svg>
+            Añadir al plan
+          </button>
+        </form>
+      </section>
+
+      <section class="quick-ideas" aria-labelledby="quickTitle">
+        <div class="section-heading">
+          <h2 id="quickTitle">Ideas rápidas</h2>
+          <span class="muted">Toca para añadir</span>
+        </div>
+        <div id="quickIdeas" class="quick-list"></div>
+      </section>
+
+      <section class="board" aria-label="Listado de actividades">
+        <div class="section-heading">
+          <h2>Plan</h2>
+          <select id="categoryFilter" class="compact-select" aria-label="Filtrar por categoría">
+            <option value="all">Todas las categorías</option>
+            <option value="Actividades">Actividades</option>
+            <option value="Playas y lugares">Playas y lugares</option>
+            <option value="Comida y cena">Comida y cena</option>
+            <option value="Notas">Notas</option>
+          </select>
+        </div>
+        <div id="activityList" class="activity-list"></div>
+        <p id="emptyState" class="empty-state" hidden>No hay ideas con esos filtros.</p>
+      </section>
+    </main>
+
+    <dialog id="editDialog" class="edit-dialog">
+      <form id="editForm" method="dialog">
+        <div class="section-heading">
+          <h2>Editar idea</h2>
+          <button class="icon-button subtle" type="button" id="closeDialog" aria-label="Cerrar" title="Cerrar">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18 6 6 18"></path>
+              <path d="m6 6 12 12"></path>
+            </svg>
+          </button>
+        </div>
+        <input id="editTitle" type="text" required>
+        <div class="form-grid">
+          <label>
+            <span>Categoría</span>
+            <select id="editCategory">
+              <option value="Actividades">Actividades</option>
+              <option value="Playas y lugares">Playas y lugares</option>
+              <option value="Comida y cena">Comida y cena</option>
+              <option value="Notas">Notas</option>
+            </select>
+          </label>
+          <label>
+            <span>Día</span>
+            <input id="editDay" type="text">
+          </label>
+        </div>
+        <textarea id="editNotes" rows="3"></textarea>
+        <div class="dialog-actions">
+          <button class="text-button danger" id="deleteButton" type="button">Eliminar</button>
+          <button class="primary-button" id="saveEditButton" value="save" type="submit">Guardar</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="app.js"></script>
+  </body>
+</html>

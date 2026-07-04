@@ -19,13 +19,30 @@
         <div>
           <h1>Nerja actividades</h1>
         </div>
-        <button class="icon-button" id="shareButton" type="button" aria-label="Compartir plan" title="Compartir plan">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"></path>
-            <path d="M16 6l-4-4-4 4"></path>
-            <path d="M12 2v13"></path>
-          </svg>
-        </button>
+        <div class="topbar-actions">
+          <button class="icon-button" id="darkModeToggle" type="button" aria-label="Alternar tema oscuro" title="Tema oscuro" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="5"></circle>
+              <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m5.08-5.08l4.24-4.24"></path>
+            </svg>
+          </button>
+          <button class="icon-button" id="shareUrlButton" type="button" aria-label="Compartir link" title="Compartir link">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="18" cy="5" r="3"></circle>
+              <circle cx="6" cy="12" r="3"></circle>
+              <circle cx="18" cy="19" r="3"></circle>
+              <path d="M8.59 13.51a6 6 0 0 0 6.82 0"></path>
+              <path d="M15.41 6.41a6 6 0 0 0-6.82 0"></path>
+            </svg>
+          </button>
+          <button class="icon-button" id="shareButton" type="button" aria-label="Compartir plan" title="Compartir plan">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"></path>
+              <path d="M16 6l-4-4-4 4"></path>
+              <path d="M12 2v13"></path>
+            </svg>
+          </button>
+        </div>
       </nav>
       <section class="hero-panel" aria-label="Resumen del plan">
         <div>
@@ -44,6 +61,35 @@
     </header>
 
     <main class="app-shell">
+      <section class="trips-bar" aria-label="Gestión de viajes">
+        <div class="trips-controls">
+          <label class="compact-label">
+            <span>Viaje:</span>
+            <select id="tripSelector" aria-label="Seleccionar viaje"></select>
+          </label>
+          <button class="icon-button small" id="newTripButton" type="button" aria-label="Nuevo viaje" title="Nuevo viaje">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 5v14"></path>
+              <path d="M5 12h14"></path>
+            </svg>
+          </button>
+          <button class="icon-button small danger" id="deleteTripButton" type="button" aria-label="Eliminar viaje" title="Eliminar viaje">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 6h18"></path>
+              <path d="M19 6v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6"></path>
+              <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"></path>
+              <line x1="10" y1="11" x2="10" y2="17"></line>
+              <line x1="14" y1="11" x2="14" y2="17"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="export-controls">
+          <button class="text-button small" id="exportButton" type="button">Descargar</button>
+          <button class="text-button small" id="importButton" type="button">Importar</button>
+          <input id="importInput" type="file" accept=".json" style="display: none;">
+        </div>
+      </section>
+
       <section class="control-strip" aria-label="Filtros">
         <label class="search-field">
           <svg viewBox="0 0 24 24" aria-hidden="true">

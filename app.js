@@ -1,4 +1,5 @@
-const STORAGE_KEY = "nerja-vacation-plan-v1";
+const STORAGE_KEY = "nerja-vacation-plan-v2";
+const LEGACY_KEY = "nerja-vacation-plan-v1";
 
 const initialActivities = [
   {
@@ -120,12 +121,20 @@ const quickIdeas = [
   { title: "Helado después de cenar", category: "Comida y cena", notes: "" }
 ];
 
+let trips = loadTrips();
+let currentTripId = trips.currentTripId || Object.keys(trips.trips)[0] || "default";
+if (!trips.trips[currentTripId]) {
+  trips.trips[currentTripId] = { name: "Nerja", activities: initialActivities };
+  saveTrips();
+}
+
 const state = {
-  activities: loadActivities(),
+  activities: trips.trips[currentTripId].activities,
   status: "all",
   category: "all",
   search: "",
-  editingId: null
+  editingId: null,
+  darkMode: loadDarkMode()
 };
 
 const els = {
@@ -151,23 +160,69 @@ const els = {
   editDay: document.querySelector("#editDay"),
   editNotes: document.querySelector("#editNotes"),
   closeDialog: document.querySelector("#closeDialog"),
-  deleteButton: document.querySelector("#deleteButton")
+  deleteButton: document.querySelector("#deleteButton"),
+  darkModeToggle: document.querySelector("#darkModeToggle"),
+  tripSelector: document.querySelector("#tripSelector"),
+  newTripButton: document.querySelector("#newTripButton"),
+  deleteTripButton: document.querySelector("#deleteTripButton"),
+  exportButton: document.querySelector("#exportButton"),
+  importButton: document.querySelector("#importButton"),
+  importInput: document.querySelector("#importInput"),
+  shareUrlButton: document.querySelector("#shareUrlButton")
 };
 
-function loadActivities() {
+function loadTrips() {
   const stored = localStorage.getItem(STORAGE_KEY);
-  if (!stored) return initialActivities;
-
-  try {
-    const parsed = JSON.parse(stored);
-    return Array.isArray(parsed) ? parsed : initialActivities;
-  } catch {
-    return initialActivities;
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      if (parsed.trips && typeof parsed.trips === "object") {
+        return parsed;
+      }
+    } catch {}
   }
+
+  const legacy = localStorage.getItem(LEGACY_KEY);
+  if (legacy) {
+    try {
+      const parsed = JSON.parse(legacy);
+      if (Array.isArray(parsed)) {
+        const tripId = createId();
+        return {
+          trips: { [tripId]: { name: "Nerja", activities: parsed } },
+          currentTripId: tripId
+        };
+      }
+    } catch {}
+  }
+
+  const defaultTripId = "default";
+  return {
+    trips: { [defaultTripId]: { name: "Nerja", activities: initialActivities } },
+    currentTripId: defaultTripId
+  };
+}
+
+function saveTrips() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(trips));
 }
 
 function saveActivities() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state.activities));
+  trips.trips[currentTripId].activities = state.activities;
+  trips.currentTripId = currentTripId;
+  saveTrips();
+}
+
+function loadDarkMode() {
+  const stored = localStorage.getItem("nerja-dark-mode");
+  if (stored !== null) return stored === "true";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
+
+function saveDarkMode(dark) {
+  localStorage.setItem("nerja-dark-mode", dark);
+  state.darkMode = dark;
+  document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
 }
 
 function createId() {
@@ -279,6 +334,9 @@ function createActivityCard(activity) {
     <button class="favorite-button${activity.favorite ? " is-favorite" : ""}" type="button" data-action="toggle-favorite" data-id="${activity.id}" aria-label="${activity.favorite ? "Quitar favorita" : "Marcar favorita"}" title="${activity.favorite ? "Quitar favorita" : "Marcar favorita"}">
       ${icon("star")}
     </button>
+    <button class="duplicate-button" type="button" data-action="duplicate" data-id="${activity.id}" aria-label="Duplicar" title="Duplicar">
+      ${icon("duplicate")}
+    </button>
     <button class="edit-button" type="button" data-action="edit" data-id="${activity.id}" aria-label="Editar" title="Editar">
       ${icon("edit")}
     </button>
@@ -293,7 +351,8 @@ function icon(name) {
     check: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m20 6-11 11-5-5"></path></svg>',
     circle: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle></svg>',
     star: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6-5.4-2.8-5.4 2.8 1-6-4.4-4.3 6.1-.9L12 3Z"></path></svg>',
-    edit: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>'
+    edit: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>',
+    duplicate: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="10" height="10" rx="1"/><path d="M15 9V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h4"/></svg>'
   };
   return icons[name];
 }
@@ -373,6 +432,141 @@ async function sharePlan() {
   }, 1600);
 }
 
+function duplicateActivity(id) {
+  const activity = state.activities.find((item) => item.id === id);
+  if (!activity) return;
+
+  addActivity({
+    title: activity.title,
+    category: activity.category,
+    day: activity.day,
+    notes: activity.notes
+  });
+}
+
+function encodeShareUrl() {
+  const data = JSON.stringify(state.activities);
+  const encoded = btoa(unescape(encodeURIComponent(data)));
+  return `${window.location.origin}${window.location.pathname}#${encoded}`;
+}
+
+async function shareUrl() {
+  const url = encodeShareUrl();
+  if (navigator.share) {
+    await navigator.share({ title: "Nerja actividades", url });
+    return;
+  }
+  await navigator.clipboard.writeText(url);
+  els.shareUrlButton.title = "Link copiado";
+  setTimeout(() => {
+    els.shareUrlButton.title = "Compartir link";
+  }, 1600);
+}
+
+function decodeShareUrl() {
+  const hash = window.location.hash.slice(1);
+  if (!hash) return null;
+  try {
+    const decoded = decodeURIComponent(escape(atob(hash)));
+    const parsed = JSON.parse(decoded);
+    return Array.isArray(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+function exportPlan() {
+  const data = {
+    name: trips.trips[currentTripId].name,
+    exported: new Date().toISOString(),
+    activities: state.activities
+  };
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `nerja-plan-${trips.trips[currentTripId].name.replace(/\s+/g, "-").toLowerCase()}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function importPlan() {
+  els.importInput.click();
+}
+
+function handleImportFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      const activities = Array.isArray(imported) ? imported : imported.activities;
+      if (!Array.isArray(activities)) throw new Error("Invalid format");
+
+      state.activities = activities.map((a) => ({
+        ...a,
+        id: a.id || createId()
+      }));
+      saveActivities();
+      render();
+      alert("Plan importado exitosamente");
+    } catch (err) {
+      alert("Error importando el archivo: " + err.message);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = "";
+}
+
+function createTrip() {
+  const name = prompt("Nombre del viaje (ej: Barcelona 2026):");
+  if (!name) return;
+
+  const tripId = createId();
+  trips.trips[tripId] = { name, activities: [] };
+  currentTripId = tripId;
+  trips.currentTripId = tripId;
+  state.activities = [];
+  saveTrips();
+  renderTripsSelector();
+  render();
+}
+
+function switchTrip(tripId) {
+  currentTripId = tripId;
+  state.activities = trips.trips[tripId].activities;
+  trips.currentTripId = tripId;
+  saveTrips();
+  render();
+}
+
+function deleteTrip(tripId) {
+  if (Object.keys(trips.trips).length <= 1) {
+    alert("No puedes eliminar el último viaje");
+    return;
+  }
+
+  if (!confirm(`Eliminar viaje "${trips.trips[tripId].name}"?`)) return;
+
+  delete trips.trips[tripId];
+  const remaining = Object.keys(trips.trips);
+  currentTripId = remaining[0];
+  state.activities = trips.trips[currentTripId].activities;
+  trips.currentTripId = currentTripId;
+  saveTrips();
+  renderTripsSelector();
+  render();
+}
+
+function renderTripsSelector() {
+  els.tripSelector.innerHTML = Object.entries(trips.trips)
+    .map(([id, trip]) => `<option value="${id}" ${id === currentTripId ? "selected" : ""}>${trip.name}</option>`)
+    .join("");
+}
+
 function bindEvents() {
   els.activityForm.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -426,6 +620,10 @@ function bindEvents() {
       updateActivity(activity.id, { favorite: !activity.favorite });
     }
 
+    if (button.dataset.action === "duplicate") {
+      duplicateActivity(activity.id);
+    }
+
     if (button.dataset.action === "edit") {
       openEditor(activity.id);
     }
@@ -458,12 +656,53 @@ function bindEvents() {
   els.shareButton.addEventListener("click", () => {
     sharePlan().catch(() => {});
   });
+
+  els.darkModeToggle.addEventListener("click", () => {
+    saveDarkMode(!state.darkMode);
+  });
+
+  els.tripSelector.addEventListener("change", (event) => {
+    switchTrip(event.target.value);
+  });
+
+  els.newTripButton.addEventListener("click", () => {
+    createTrip();
+  });
+
+  els.deleteTripButton.addEventListener("click", () => {
+    deleteTrip(currentTripId);
+  });
+
+  els.exportButton.addEventListener("click", () => {
+    exportPlan();
+  });
+
+  els.importButton.addEventListener("click", () => {
+    importPlan();
+  });
+
+  els.importInput.addEventListener("change", handleImportFile);
+
+  els.shareUrlButton.addEventListener("click", () => {
+    shareUrl().catch(() => {});
+  });
 }
+
+const sharedData = decodeShareUrl();
+if (sharedData) {
+  state.activities = sharedData;
+} else if (window.location.hash) {
+  window.history.replaceState(null, "", window.location.pathname);
+}
+
+document.documentElement.setAttribute("data-theme", state.darkMode ? "dark" : "light");
+els.darkModeToggle.setAttribute("aria-pressed", state.darkMode ? "true" : "false");
 
 if ("serviceWorker" in navigator && location.protocol !== "file:") {
   navigator.serviceWorker.register("sw.js").catch(() => {});
 }
 
 renderQuickIdeas();
+renderTripsSelector();
 bindEvents();
 render();
